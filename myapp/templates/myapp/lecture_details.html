@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Iconn | {{ lecture.name }} {% endblock title %}
+
+{% block header %} {{lecture.name}} {% endblock header %}
+
+{% block content %}
+{% comment %} <h1>This page has been viewed {{ lecture.views }} times.</h1> {% endcomment %}
+    <embed src="{{lecture.file.url}}#toolbar=0" type="application/pdf" width="100%" height="900px">
+{% endblock content %}

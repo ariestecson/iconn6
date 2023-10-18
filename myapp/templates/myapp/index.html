@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}Iconn | Home{% endblock title %}
+
+{% block header %} Home {% endblock header %}
+
+{% block custom_styles %} <link rel="stylesheet" href="{% static 'myapp/vendor/datatables/dataTables.bootstrap4.min.css' %}"> {% endblock custom_styles %} 
+
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Lecture List</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Lecture</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Date Modified</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Lecture</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Date Modified</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    
+                    {% for lecture in lectures %}
+                        <tr>
+                            <td class="fw-bold"> <a href="{% url 'lecture_view' lecture.pk %}">{{lecture.name}}</a> </td>
+                            <td> {{lecture.description}} </td>
+                            <td> {{lecture.category}} </td>
+                            <td> {{lecture.date_modified}} </td>
+                        </tr>
+                    {% endfor %}
+                        
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block page_scripts %}
+<script src="{% static 'myapp/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'myapp/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'myapp/js/demo/datatables-demo.js' %}"></script>
+{% endblock page_scripts %}
+
+
+
+
+    
+    

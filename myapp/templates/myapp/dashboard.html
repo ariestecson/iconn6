@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Iconn | Dashboard{% endblock title %}
+
+{% block header %}Dashboard{% endblock header %}
+
+{% block content %}
+
+    <!-- Content Row -->
+    <div class="row">
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Number of Users</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{users_count}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Number of Lectures</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{lectures | length}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-file-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Number of Active Users</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{active_users_count}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Row -->
+
+    <div class="row">
+
+        <!-- Area Chart -->
+        <div class="col-xl-12 col-lg-12">
+            <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div
+                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Lectures overall views</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                    </div>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="lectureChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+
+        <!-- Content Column -->
+        <div class="col-lg-12 mb-4">
+
+            <!-- Project Card Example -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Lectures</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Lecture Title</th>
+                                <th>Category</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>Lecture Title</th>
+                                <th>Category</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            
+                            {% for lecture in lectures %}
+                                <tr>
+                                    <td class="fw-bold"> <a href="{% url 'lecture_view' lecture.pk %}">{{lecture.name}}</a> </td>
+                                    <td>{{ lecture.category }}</td>
+                                    <td>
+                                        <i class="fas fa-chart-line text-secondary" aria-hidden="true"></i>
+                                        <a href="{% url 'lect_dashboard' lecture.pk %}">  View Analytics</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                                
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block page_scripts %}
+<script src="{% static 'myapp/vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'myapp/vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'myapp/js/demo/datatables-demo.js' %}"></script>
+<script>
+    var ctx = document.getElementById('lectureChart');
+    var dateList = {{ lec_names | safe }};
+    var viewCountList = JSON.parse('{{ view_count_list | safe }}');
+    var chart = new Chart(ctx, {
+        type: 'bar',  // Use 'bar' for a bar chart
+        data: {
+            labels: dateList,
+            datasets: [{
+                label: 'Lecture Views',
+                data: viewCountList,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            layout: {
+            padding: {
+                left: 10,
+                right: 25,
+                top: 25,
+                bottom: 0
+            }
+            },
+            scales: {
+                xAxes: [{
+                    time: {
+                      unit: 'date'
+                    },
+                    gridLines: {
+                      display: false,
+                      drawBorder: false
+                    },
+                    ticks: {
+                      maxTicksLimit: 7
+                    }
+                  }],
+                  yAxes: [{
+                    ticks: {
+                      maxTicksLimit: 5,
+                      padding: 10,
+                      beginAtZero: true,
+                      stepSize: 1
+                    },
+                    gridLines: {
+                      color: "rgb(234, 236, 244)",
+                      zeroLineColor: "rgb(234, 236, 244)",
+                      drawBorder: false,
+                      borderDash: [2],
+                      zeroLineBorderDash: [2]
+                    }
+                  }],
+            }
+        }
+    });
+</script>
+{% endblock page_scripts %}
